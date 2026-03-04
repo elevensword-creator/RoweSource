@@ -615,6 +615,7 @@ bool8 TryIncrementMonLevel(struct Pokemon *mon);
 u8 GetNumberOfTMMoves(struct Pokemon *mon);
 u32 CanMonLearnTMHM(struct Pokemon *mon, u8 tm);
 u32 CanSpeciesLearnTMHM(u16 species, u8 tm);
+bool8 IsSpeciesAllowedByCustomList(u16 species, u8 formId);
 u8 GetTMMovesPokemon(struct Pokemon *mon, u16 *Moves);
 //Move Relearner Tutor --------------------------------------------
 u8 GetMoveRelearnerMoves(struct Pokemon *mon, u16 *moves);
