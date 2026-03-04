@@ -88,6 +88,7 @@ static void CB2_HandleStartMultiBattle(void);
 static void CB2_HandleStartBattle(void);
 static void TryCorrectShedinjaLanguage(struct Pokemon *mon);
 static u8 CreateNPCTrainerParty(struct Pokemon *party, u16 trainerNum, bool8 firstTrainer);
+static u16 GetAllowedTrainerBattleSpecies(u16 species, u8 level);
 static void BattleMainCB1(void);
 static void sub_8038538(struct Sprite *sprite);
 static void sub_8038F14(void);
@@ -1994,6 +1995,8 @@ static u8 CreateNPCTrainerParty(struct Pokemon *party, u16 trainerNum, bool8 fir
 				//Check that the level isn't above 100
 				if(pokemonLevel > 100)
 					pokemonLevel = 100;
+
+				newspecies = GetAllowedTrainerBattleSpecies(newspecies, pokemonLevel);
 				
 				//Set its FormId
 				formId = GetFormIdFromFormSpeciesId(newspecies);
@@ -2108,6 +2111,8 @@ static u8 CreateNPCTrainerParty(struct Pokemon *party, u16 trainerNum, bool8 fir
 				//Check that the level isn't above 100
 				if(pokemonLevel > 100)
 					pokemonLevel = 100;
+
+				newspecies = GetAllowedTrainerBattleSpecies(newspecies, pokemonLevel);
 				
 				//Set its FormId
 				formId = GetFormIdFromFormSpeciesId(newspecies);
@@ -2223,6 +2228,8 @@ static u8 CreateNPCTrainerParty(struct Pokemon *party, u16 trainerNum, bool8 fir
 				//Check that the level isn't above 100
 				if(pokemonLevel > 100)
 					pokemonLevel = 100;
+
+				newspecies = GetAllowedTrainerBattleSpecies(newspecies, pokemonLevel);
 				
 				//Set its FormId
 				formId = GetFormIdFromFormSpeciesId(newspecies);
@@ -2350,6 +2357,8 @@ static u8 CreateNPCTrainerParty(struct Pokemon *party, u16 trainerNum, bool8 fir
 				//Check that the level isn't above 100 ---------------------------------------------------------------------------------
 				if(pokemonLevel > 100)
 					pokemonLevel = 100;
+
+				newspecies = GetAllowedTrainerBattleSpecies(newspecies, pokemonLevel);
 				
 				//Wattson has an Alolan Raichu so I have to force it
 				if(trainerNum == TRAINER_WATTSON_1 && newspecies == SPECIES_RAICHU)
@@ -2500,6 +2509,26 @@ static u8 CreateNPCTrainerParty(struct Pokemon *party, u16 trainerNum, bool8 fir
     }
 
     return gTrainers[trainerNum].partySize;
+}
+
+static u16 GetAllowedTrainerBattleSpecies(u16 species, u8 level)
+{
+    u8 formId;
+    s32 i;
+
+    formId = GetFormIdFromFormSpeciesId(species);
+    if (IsSpeciesAllowedByCustomList(species, formId))
+        return species;
+
+    for (i = 0; i < 100; i++)
+    {
+        species = GetTrainerPokemon(GetRandomFirstStage(SPECIES_NONE), level);
+        formId = GetFormIdFromFormSpeciesId(species);
+        if (IsSpeciesAllowedByCustomList(species, formId))
+            return species;
+    }
+
+    return SPECIES_BULBASAUR;
 }
 
 void VBlankCB_Battle(void)
