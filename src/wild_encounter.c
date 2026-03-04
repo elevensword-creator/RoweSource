@@ -393,6 +393,9 @@ static bool8 TryGenerateWildMon(const struct WildPokemonInfo *wildMonInfo, u8 ar
         break;
     }
 
+    if (!IsSpeciesAllowedByCustomList(wildMonInfo->wildPokemon[wildMonIndex].species, 0))
+        return FALSE;
+
     level = ChooseWildMonLevel(&wildMonInfo->wildPokemon[wildMonIndex]);
     if (flags & WILD_CHECK_REPEL && !IsWildLevelAllowedByRepel(level))
         return FALSE;
@@ -406,6 +409,9 @@ static bool8 TryGenerateWildMon(const struct WildPokemonInfo *wildMonInfo, u8 ar
 static u16 GenerateFishingWildMon(const struct WildPokemonInfo *wildMonInfo, u8 rod)
 {
     u8 wildMonIndex = ChooseWildMonIndex_Fishing(rod);
+    if (!IsSpeciesAllowedByCustomList(wildMonInfo->wildPokemon[wildMonIndex].species, 0))
+        return SPECIES_NONE;
+
     u8 level = ChooseWildMonLevel(&wildMonInfo->wildPokemon[wildMonIndex]);
 
     CreateWildMon(wildMonInfo->wildPokemon[wildMonIndex].species, level);
@@ -417,6 +423,9 @@ static bool8 SetUpMassOutbreakEncounter(u8 flags)
     u16 i;
 
     if (flags & WILD_CHECK_REPEL && !IsWildLevelAllowedByRepel(gSaveBlock1Ptr->outbreakPokemonLevel))
+        return FALSE;
+
+    if (!IsSpeciesAllowedByCustomList(gSaveBlock1Ptr->outbreakPokemonSpecies, 0))
         return FALSE;
 
     FlagSet(FLAG_IS_OUTBREAK_ENCOUNTER);

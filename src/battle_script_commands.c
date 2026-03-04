@@ -12737,6 +12737,9 @@ static void Cmd_handleballthrow(void)
         if (gBattleMons[gBattlerTarget].status1 & (STATUS1_POISON | STATUS1_BURN | STATUS1_PARALYSIS | STATUS1_TOXIC_POISON))
             odds = (odds * 15) / 10;
 
+        if (!IsSpeciesAllowedByCustomList(gBattleMons[gBattlerTarget].species, gBattleMons[gBattlerTarget].formId))
+            odds = 0;
+
         if (gLastUsedItem != ITEM_SAFARI_BALL)
         {
             if (gLastUsedItem == ITEM_MASTER_BALL)
@@ -12832,6 +12835,12 @@ static void Cmd_givecaughtmon(void)
     u8  formId = GetMonData(&gEnemyParty[gBattlerPartyIndexes[GetCatchingBattler()]], MON_DATA_FORM_ID, NULL);
     u16 speciesID = GetFormSpeciesId(species, formId);
     u8 newFormId = 0;
+
+    if (!IsSpeciesAllowedByCustomList(species, formId))
+    {
+        gBattlescriptCurrInstr++;
+        return;
+    }
     u16 newSpeciesID = SPECIES_NONE;
     
     //Remove mega form upon catching
